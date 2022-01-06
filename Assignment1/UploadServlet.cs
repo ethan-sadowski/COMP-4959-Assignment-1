@@ -15,7 +15,7 @@ namespace Assignment1
 
         void savePicture(List<byte> pictureData)
         {
-            System.IO.File.WriteAllBytes("../../../pictures/picture.jpg", pictureData.ToArray());
+            System.IO.File.WriteAllBytes("../../pictures/picture.jpg", pictureData.ToArray());
         }
         List<byte> parsePicture(ServletRequest req)
         {
@@ -57,17 +57,12 @@ namespace Assignment1
                 "</body></html>\r\n";
             res.writeToResponse(body);
         }
-
+ 
 		public void doPost(ServletRequest req, ServletResponse res)
-		{
+        {
             List<byte> pictureData = parsePicture(req);
             savePicture(pictureData);
-
-        }
-    }
-		public void doPost(ServletRequest request, ServletResponse response)
-        {
-            DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "../../../pictures/");
+            DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "../../pictures/");
             string bodyStart =
                 "HTTP/1.1 200 OK\r\n" +
                 "Content-Type: text/html\r\n\r\n" +
@@ -81,7 +76,7 @@ namespace Assignment1
                 files += "<li>" + item.Name + "</li>";
             }
             string bodyEnd = "</ul></body></html>\r\n";
-            response.writeToResponse(bodyStart + files + bodyEnd);
+            res.writeToResponse(bodyStart + files + bodyEnd);
         }
 	}
 }
