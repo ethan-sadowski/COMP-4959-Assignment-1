@@ -24,7 +24,7 @@ namespace Assignment1
             byte[] reqBytes = req.getRequestBytes().ToArray();
             for (int i = 0; i < byteLength; i++)
             {
-                Console.Write(reqBytes[i]);
+                Console.WriteLine("Character: " + (char) reqBytes[i]);
             }
             return new List<byte>();
         }
@@ -53,7 +53,7 @@ namespace Assignment1
 		{
             List<byte> pictureData = parsePicture(req);
             savePicture(pictureData);
-			
-		}
-	}
+
+        }
+    }
 }
