@@ -39,7 +39,6 @@ namespace Assignment1
 					nextString = "";
 				} else if (nextString == "CUSTOM")
                 {
-					Console.WriteLine(nextString);
 					addHeader("Method", nextString);
 					nextString = "";
 				}

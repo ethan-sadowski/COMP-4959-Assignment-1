@@ -17,23 +17,23 @@ namespace ClientApp
             IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
             IPEndPoint ipEnd = new IPEndPoint(ipAddress, 8888);
             Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-            Console.WriteLine(Directory.GetCurrentDirectory());
             DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "../../../../../../Assignment1/pictures/");
-            Console.WriteLine(dir.GetFiles()[0].FullName);
             string fileName = dir.GetFiles()[0].FullName;
             byte[] fileData = File.ReadAllBytes(fileName);
 
             HttpMethod custom = new HttpMethod("CUSTOM");
-            Console.WriteLine("Custom: " + custom.ToString());
+            string formEndString = "------WebKitFormBoundary";
             int contentLength = fileData.Length;
             string requestHeader = "CUSTOM\r\nContent-Length: " + contentLength + "\n\r\n\r\n\r\n";
-            byte[] fileDataByte = Encoding.ASCII.GetBytes(requestHeader);
-            byte[] clientData = new byte[requestHeader.Length + fileData.Length];
 
-            byte[] customByteArr = Encoding.ASCII.GetBytes(custom.ToString());
+
+            byte[] fileDataByte = Encoding.ASCII.GetBytes(requestHeader);
+            byte[] clientData = new byte[requestHeader.Length + fileData.Length + formEndString.Length];
+            byte[] formEnd = Encoding.ASCII.GetBytes(formEndString);
 
             fileDataByte.CopyTo(clientData, 0);
             fileData.CopyTo(clientData, requestHeader.Length);
+            formEnd.CopyTo(clientData, requestHeader.Length + fileData.Length);
             Console.WriteLine(fileData.Length);
             Console.WriteLine(clientData.Length - requestHeader.Length);
             //Console.WriteLine(Encoding.Default.GetString(clientData));
