@@ -1,19 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System;
 using System.IO;
-using System.Collections;
 
-namespace Assignment1
-{
-	class UploadServlet : Servlet
-	{
-        public UploadServlet() { }
-        public void doGet(ServletRequest req, ServletResponse res)
-		{
+namespace Assignment1 {
+    class UploadServlet : Servlet {
+        public UploadServlet() {
+        }
+
+        void savePicture(List<byte> pictureData, string filename) {
+            File.WriteAllBytes("../../pictures/" + filename, pictureData.ToArray());
+        }
+        void parsePicture(ServletRequest req) {
+            int byteLength = req.getRequestBytes().Count;
+            int imgSize = Int32.Parse(req.getHeader("Content-Length"));
+            List<byte> pictureData = new List<byte>();
+            int bytesRead = 0;
+            byte[] imageBuffer = new byte[imgSize];
+            byte[] reqBytes = req.getRequestBytes().ToArray();
+            int webkitCount = 0;
+            string s = req.getRequestString();
+
+
+
+            int imgIndex = s.IndexOf("\n\r", s.IndexOf("\r\n\r\n") + 4) + 2;
+            int imgEnd = s.IndexOf("------WebKitFormBoundary", imgIndex);
+
+            int filenameIndex = s.IndexOf("filename=\"") + 10;
+            int filenameEnd = s.IndexOf("\"\r\n", filenameIndex);
+
+            string filename = s.Substring(filenameIndex, filenameEnd - filenameIndex);
+
+
+            // Add 13 (9 for "caption" + 4 for \r\n\r\n)
+            int capIndex = s.IndexOf("\"caption\"", imgEnd) + 13;
+            int capEnd = s.IndexOf("------WebKitFormBoundary", capIndex) - 2;
+            string cap = s.Substring(capIndex, capEnd - capIndex);
+
+            // Add 10 (6 for "caption" + 4 for \r\n\r\n)
+            int dateIndex = s.IndexOf("\"date\"", capEnd) + 10;
+            int dateEnd = s.IndexOf("------WebKitFormBoundary", dateIndex) - 2;
+            string date = s.Substring(dateIndex, dateEnd - dateIndex);
+
+            Console.WriteLine(s);
+            List<byte> imageBytes = new List<byte>();
+            for(int i = imgIndex + 1; i < imgEnd - 1; i++) {
+                imageBytes.Add(reqBytes[i]);
+            }
+            string picname = cap + date + filename;
+            savePicture(imageBytes, picname);
+        }
+        public void doGet(ServletRequest req, ServletResponse res) {
             string body =
                 "HTTP/1.1 200 OK\r\n" +
                 "Content-Type: text/html\r\n\r\n" +
@@ -32,11 +68,9 @@ namespace Assignment1
                 "</body></html>\r\n";
             res.writeToResponse(body);
         }
- 
-		public void doPost(ServletRequest req, ServletResponse res)
-        {
-            List<byte> pictureData = parsePicture(req);
-            savePicture(pictureData);
+
+        public void doPost(ServletRequest req, ServletResponse res) {
+            parsePicture(req);
             DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "../../../pictures/");
             string bodyStart =
                 "HTTP/1.1 200 OK\r\n" +
@@ -46,8 +80,7 @@ namespace Assignment1
                 "<body><h1>Current Photos</h1>" +
                 "<ul>";
             string files = "";
-            foreach (FileInfo item in dir.GetFiles())
-            {
+            foreach(FileInfo item in dir.GetFiles()) {
                 files += "<li>" + item.Name + "</li>";
             }
             string bodyEnd = "</ul></body></html>\r\n";
@@ -58,11 +91,6 @@ namespace Assignment1
             List<byte> pictureData = parseCustomPicture(req);
             saveCustomPicture(pictureData);
         }
-        void savePicture(List<byte> pictureData)
-        {
-            System.IO.File.WriteAllBytes("../../pictures/picture.jpg", pictureData.ToArray());
-            Console.WriteLine("Saved");
-        }
 
         void saveCustomPicture(List<byte> pictureData)
         {
@@ -70,26 +98,6 @@ namespace Assignment1
             Console.WriteLine("Saved");
         }
 
-        List<byte> parsePicture(ServletRequest req)
-        {
-            int byteLength = req.getRequestBytes().Count;
-            int imgSize = Int32.Parse(req.getHeader("Content-Length"));
-            List<byte> pictureData = new List<byte>();
-            int bytesRead = 0;
-            byte[] imageBuffer = new byte[imgSize];
-            byte[] reqBytes = req.getRequestBytes().ToArray();
-            int webkitCount = 0;
-            string s = req.getRequestString();
-            int imgIndex = s.IndexOf("\n\r", s.IndexOf("\r\n\r\n") + 4) + 2;
-            int imgEnd = s.IndexOf("------WebKitFormBoundary", imgIndex);
-            List<byte> imageBytes = new List<byte>();
-            for (int i = imgIndex + 1; i < imgEnd - 1; i++)
-            {
-                imageBytes.Add(reqBytes[i]);
-            }
-
-            return imageBytes;
-        }
 
         //Parses custom requests
         List<byte> parseCustomPicture(ServletRequest req)

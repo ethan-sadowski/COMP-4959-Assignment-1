@@ -11,6 +11,5 @@ namespace Assignment1
 		void doGet(ServletRequest request, ServletResponse response);
 		void doPost(ServletRequest request, ServletResponse response);
 		void doCustom(ServletRequest request, ServletResponse response);
-
 	}
 }
