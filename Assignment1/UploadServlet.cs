@@ -30,11 +30,8 @@ namespace Assignment1
             int imgIndex = s.IndexOf("\n\r", s.IndexOf("\r\n\r\n") + 4) + 2;
             int imgEnd = s.IndexOf("------WebKitFormBoundary", imgIndex);
             List<byte> imageBytes = new List<byte>();
-            Console.WriteLine(imgIndex);
-            Console.WriteLine(imgEnd);
             for (int i = imgIndex + 1; i < imgEnd - 1; i++)
             {
-                Console.Write((char) reqBytes[i]);
                 imageBytes.Add(reqBytes[i]);
             }
 
@@ -71,8 +68,6 @@ namespace Assignment1
 		public void doPost(ServletRequest request, ServletResponse response)
         {
             DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "../../../pictures/");
-            Console.WriteLine(dir.GetFiles().Length);
-            Console.WriteLine(dir.FullName);
             string bodyStart =
                 "HTTP/1.1 200 OK\r\n" +
                 "Content-Type: text/html\r\n\r\n" +
