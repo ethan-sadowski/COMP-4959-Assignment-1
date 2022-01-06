@@ -56,13 +56,20 @@ namespace Assignment1
         public void doCustom(ServletRequest req, ServletResponse res)
         {
             List<byte> pictureData = parseCustomPicture(req);
-            savePicture(pictureData);
+            saveCustomPicture(pictureData);
         }
         void savePicture(List<byte> pictureData)
         {
             System.IO.File.WriteAllBytes("../../pictures/picture.jpg", pictureData.ToArray());
             Console.WriteLine("Saved");
         }
+
+        void saveCustomPicture(List<byte> pictureData)
+        {
+            System.IO.File.WriteAllBytes("../../pictures/picture.jpg", pictureData.ToArray());
+            Console.WriteLine("Saved");
+        }
+
         List<byte> parsePicture(ServletRequest req)
         {
             int byteLength = req.getRequestBytes().Count;
