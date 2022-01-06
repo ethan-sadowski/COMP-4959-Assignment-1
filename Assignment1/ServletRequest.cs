@@ -41,9 +41,12 @@ namespace Assignment1
 				else if (nextString == "Content-Length:")
 				{
 					nextString = "";
+					i++;
 					while ((char)this.reqBytes[i] != ' ' && (char)this.reqBytes[i] != '\r' && (char)this.reqBytes[i] != '\n')
 					{
 						nextString += (char)this.reqBytes[i];
+						Console.Write((char)this.reqBytes[i]);
+						i++;
 					}
 					addHeader("Content-Length", nextString);
 					nextString = "";
@@ -51,9 +54,11 @@ namespace Assignment1
 				else if (nextString == "User-Agent:")
 				{
 					nextString = "";
+					i++;
 					while ((char)this.reqBytes[i] != ' ' && (char)this.reqBytes[i] != '\r' && (char)this.reqBytes[i] != '\n')
 					{
 						nextString += (char)this.reqBytes[i];
+						i++;
 					}
 					addHeader("User-Agent", nextString);
 					nextString = "";

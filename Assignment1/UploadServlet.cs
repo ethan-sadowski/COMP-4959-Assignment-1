@@ -9,6 +9,25 @@ namespace Assignment1
 	class UploadServlet : Servlet
 	{
         public UploadServlet() { }
+
+        void savePicture(List<byte> pictureData)
+        {
+
+        }
+        List<byte> parsePicture(ServletRequest req)
+        {
+            int byteLength = req.getRequestBytes().Count;
+            int imgSize = Int32.Parse(req.getHeader("Content-Length"));
+            List<byte> pictureData = new List<byte>();
+            int bytesRead = 0;
+            byte[] imageBuffer = new byte[imgSize];
+            byte[] reqBytes = req.getRequestBytes().ToArray();
+            for (int i = 0; i < byteLength; i++)
+            {
+                Console.Write(reqBytes[i]);
+            }
+            return new List<byte>();
+        }
 		public void doGet(ServletRequest req, ServletResponse res)
 		{
             string body =
@@ -30,8 +49,10 @@ namespace Assignment1
             res.writeToResponse(body);
         }
 
-		public void doPost(ServletRequest request, ServletResponse response)
+		public void doPost(ServletRequest req, ServletResponse res)
 		{
+            List<byte> pictureData = parsePicture(req);
+            savePicture(pictureData);
 			
 		}
 	}
