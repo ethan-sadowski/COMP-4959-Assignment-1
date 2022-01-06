@@ -37,6 +37,11 @@ namespace Assignment1
 				{
 					addHeader("Method", nextString);
 					nextString = "";
+				} else if (nextString == "CUSTOM")
+                {
+					Console.WriteLine(nextString);
+					addHeader("Method", nextString);
+					nextString = "";
 				}
 				else if (nextString == "Content-Length:")
 				{
@@ -45,7 +50,7 @@ namespace Assignment1
 					while ((char)this.reqBytes[i] != ' ' && (char)this.reqBytes[i] != '\r' && (char)this.reqBytes[i] != '\n')
 					{
 						nextString += (char)this.reqBytes[i];
-						Console.Write((char)this.reqBytes[i]);
+						//Console.Write((char)this.reqBytes[i]);
 						i++;
 					}
 					addHeader("Content-Length", nextString);

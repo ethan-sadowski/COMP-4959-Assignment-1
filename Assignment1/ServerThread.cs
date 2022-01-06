@@ -19,9 +19,12 @@ namespace Assignment1
             {
                 httpServlet.doGet(req, res);
             }
-            else 
+            else if (req.getHeader("Method") == "POST")
             {
                 httpServlet.doPost(req, res);
+            } else
+            {
+                httpServlet.doCustom(req, res);
             }
         }
         public void threadMethod()

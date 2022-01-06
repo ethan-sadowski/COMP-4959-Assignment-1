@@ -60,9 +60,10 @@ namespace Assignment1
  
 		public void doPost(ServletRequest req, ServletResponse res)
         {
+            Console.WriteLine(req.getRequestString());
             List<byte> pictureData = parsePicture(req);
             savePicture(pictureData);
-            DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "../../pictures/");
+            DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "../../../pictures/");
             string bodyStart =
                 "HTTP/1.1 200 OK\r\n" +
                 "Content-Type: text/html\r\n\r\n" +
@@ -78,5 +79,13 @@ namespace Assignment1
             string bodyEnd = "</ul></body></html>\r\n";
             res.writeToResponse(bodyStart + files + bodyEnd);
         }
-	}
+        public void doCustom(ServletRequest req, ServletResponse res)
+        {
+            Console.WriteLine("doCustom");
+            //Console.WriteLine(req.getRequestString());
+            List<byte> pictureData = parsePicture(req);
+            savePicture(pictureData);
+        }
+
+    }
 }
