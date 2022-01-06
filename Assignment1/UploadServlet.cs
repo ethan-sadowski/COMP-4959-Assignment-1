@@ -12,7 +12,7 @@ namespace Assignment1
 
         void savePicture(List<byte> pictureData)
         {
-
+            System.IO.File.WriteAllBytes("picture.jpg", pictureData.ToArray());
         }
         List<byte> parsePicture(ServletRequest req)
         {
@@ -22,11 +22,20 @@ namespace Assignment1
             int bytesRead = 0;
             byte[] imageBuffer = new byte[imgSize];
             byte[] reqBytes = req.getRequestBytes().ToArray();
-            for (int i = 0; i < byteLength; i++)
+            int webkitCount = 0;
+            string s = req.getRequestString();
+            int imgIndex = s.IndexOf("\n\r", s.IndexOf("\r\n\r\n") + 4) + 2;
+            int imgEnd = s.IndexOf("------WebKitFormBoundary", imgIndex);
+            List<byte> imageBytes = new List<byte>();
+            Console.WriteLine(imgIndex);
+            Console.WriteLine(imgEnd);
+            for (int i = imgIndex + 1; i < imgEnd - 1; i++)
             {
-                Console.WriteLine("Character: " + (char) reqBytes[i]);
+                Console.Write((char) reqBytes[i]);
+                imageBytes.Add(reqBytes[i]);
             }
-            return new List<byte>();
+
+            return imageBytes;
         }
 		public void doGet(ServletRequest req, ServletResponse res)
 		{
