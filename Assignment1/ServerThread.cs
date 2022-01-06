@@ -31,7 +31,7 @@ namespace Assignment1
             while (true)
             {
                 int nextBytes = cls.Receive(bytesReceived, bytesReceived.Length, 0);
-                if (cls.Available == 0 || (Encoding.ASCII.GetString(bytesReceived, 0, 1)[0] == '\0'))
+                if (cls.Available == 0)
                 {
                     break;
                 }
