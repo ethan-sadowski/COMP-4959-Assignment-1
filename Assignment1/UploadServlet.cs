@@ -12,7 +12,7 @@ namespace Assignment1
 
         void savePicture(List<byte> pictureData)
         {
-            System.IO.File.WriteAllBytes("picture.jpg", pictureData.ToArray());
+            System.IO.File.WriteAllBytes("../../../pictures/picture.jpg", pictureData.ToArray());
         }
         List<byte> parsePicture(ServletRequest req)
         {
