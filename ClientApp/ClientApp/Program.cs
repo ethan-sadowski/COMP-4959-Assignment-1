@@ -47,16 +47,6 @@ namespace ClientApp
             string requestHeader = "CUSTOM\r\nContent-Length: " + contentLength
                 + "\r\nName: " + caption + date + fileName 
                 + "\n\r\n\r\n\r\n";
-            
-           /*string firstBoundary = "------WebKitFormBoundaryQJZ1hukB5Ezq5RXh" + "\r\n" +
-                                  "Content-Disposition: form-data; name=\"fileName\"; filename=\"" + file + "\"" + "\r\n" +
-                                  "Content-Type: image/png" + "\r\n\r\n";
-
-            string postImageBoundaries = "------WebKitFormBoundaryQJZ1hukB5Ezq5RXh" + "\r\n" +
-                                         "Content-Disposition: form-data; name=\"caption\"" + "\r\n\r\n" + caption + "\r\n" +
-                                         "------WebKitFormBoundaryQJZ1hukB5Ezq5RXh" + "\r\n" +
-                                         "Content-Disposition: form-data; name=\"date\"" + "\r\n\r\n" + date + "\r\n" +
-                                         "------WebKitFormBoundaryQJZ1hukB5Ezq5RXh--" + "\r\n";*/
 
             byte[] fileDataByte = Encoding.ASCII.GetBytes(requestHeader);
             byte[] clientData = new byte[requestHeader.Length + image.Length + formEndString.Length];
