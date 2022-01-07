@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Assignment1 {
     class UploadServlet : Servlet {
@@ -29,7 +30,6 @@ namespace Assignment1 {
             int filenameEnd = s.IndexOf("\"\r\n", filenameIndex);
 
             string filename = s.Substring(filenameIndex, filenameEnd - filenameIndex);
-
 
             // Add 13 (9 for "caption" + 4 for \r\n\r\n)
             int capIndex = s.IndexOf("\"caption\"", imgEnd) + 13;
@@ -86,28 +86,38 @@ namespace Assignment1 {
             string bodyEnd = "</ul></body></html>\r\n";
             res.writeToResponse(bodyStart + files + bodyEnd);
         }
-        public void doCustom(ServletRequest req, ServletResponse res)
+        public string doCustom(ServletRequest req, ServletResponse res)
         {
-            List<byte> pictureData = parseCustomPicture(req);
-            saveCustomPicture(pictureData);
-        }
+            parseCustomPicture(req);
+            DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "../../../pictures/");
+            // Use NewtonSoft if we really care about serializing/deserializing with a package.
+            // For our purposes had coding it works the same. It just goes to a String anyways.
+            //Newtonsoft.Json json = 
 
-        void saveCustomPicture(List<byte> pictureData)
-        {
-            System.IO.File.WriteAllBytes("../../pictures/picture.jpg", pictureData.ToArray());
-            Console.WriteLine("Saved");
+            string bodyStart = "{\n";
+            string files = "";
+            foreach (FileInfo item in dir.GetFiles())
+            {
+                files += "  \"" + item.Name + "\": \"" + item.CreationTime +"\",\n";
+            }
+            string bodyEnd = "}";
+            return bodyStart + files + bodyEnd;
         }
-
 
         //Parses custom requests
-        List<byte> parseCustomPicture(ServletRequest req)
+        void parseCustomPicture(ServletRequest req)
         {
-            
-            int imgSize = Int32.Parse(req.getHeader("Content-Length"));
             byte[] reqBytes = req.getRequestBytes().ToArray();
             string s = req.getRequestString();
-
-            int imgIndex = s.IndexOf("\n\r\n\r\n\r\n")+6;
+            int nameStart = s.IndexOf("Name: ") + 6;
+            int nameEnd = s.IndexOf("\n\r\n\r\n\r\n");
+            List<byte> name = new List<byte>();
+            for (int i = nameStart + 1; i < nameEnd - 1; i++)
+            {
+                name.Add(reqBytes[i]);
+            }
+            string filename = s.Substring(nameStart, nameEnd - nameStart);
+            int imgIndex = s.IndexOf("\n\r\n\r\n\r\n") + 6;
             int imgEnd = s.IndexOf("------WebKitFormBoundar", imgIndex);
 
             List<byte> imageBytes = new List<byte>();
@@ -115,8 +125,7 @@ namespace Assignment1 {
             {
                 imageBytes.Add(reqBytes[i]);
             }
-            return imageBytes;
-
+            savePicture(imageBytes, filename);
         }
     }
 }
