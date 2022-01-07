@@ -17,29 +17,54 @@ namespace ClientApp
             IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
             IPEndPoint ipEnd = new IPEndPoint(ipAddress, 8888);
             Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
-            DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "../../../../../../Assignment1/pictures/");
-            FileInfo file = dir.GetFiles()[0];
-            string fileName = file.FullName;
-            byte[] fileData = File.ReadAllBytes(fileName);
+
+            bool fileFound = false;
+            string fileName = "";
+            while (!fileFound)
+            {
+                Console.WriteLine("Enter the name of the picture you would like to upload.\n Please ensure the picture is located in the same root directory as the console client.");
+                string readFileName = Console.ReadLine();
+                if (File.Exists(Directory.GetCurrentDirectory() + "\\" + readFileName))
+                {
+                    fileFound = true;
+                    fileName = readFileName;
+                    break;
+                }
+            
+            }
+
+            byte[] image = File.ReadAllBytes(Directory.GetCurrentDirectory() + "\\" + fileName);
+
             
             string formEndString = "------WebKitFormBoundary";
-            int contentLength = fileData.Length;
+            int contentLength = image.Length;
+            
             Console.WriteLine("Enter the date:");
             string date = Console.ReadLine();
             Console.WriteLine("Enter a caption:");
             string caption = Console.ReadLine();
 
             string requestHeader = "CUSTOM\r\nContent-Length: " + contentLength
-                + "\r\nName: " + caption + date + file.Name
+                + "\r\nName: " + caption + date + fileName 
                 + "\n\r\n\r\n\r\n";
+            
+           /*string firstBoundary = "------WebKitFormBoundaryQJZ1hukB5Ezq5RXh" + "\r\n" +
+                                  "Content-Disposition: form-data; name=\"fileName\"; filename=\"" + file + "\"" + "\r\n" +
+                                  "Content-Type: image/png" + "\r\n\r\n";
+
+            string postImageBoundaries = "------WebKitFormBoundaryQJZ1hukB5Ezq5RXh" + "\r\n" +
+                                         "Content-Disposition: form-data; name=\"caption\"" + "\r\n\r\n" + caption + "\r\n" +
+                                         "------WebKitFormBoundaryQJZ1hukB5Ezq5RXh" + "\r\n" +
+                                         "Content-Disposition: form-data; name=\"date\"" + "\r\n\r\n" + date + "\r\n" +
+                                         "------WebKitFormBoundaryQJZ1hukB5Ezq5RXh--" + "\r\n";*/
 
             byte[] fileDataByte = Encoding.ASCII.GetBytes(requestHeader);
-            byte[] clientData = new byte[requestHeader.Length + fileData.Length + formEndString.Length];
+            byte[] clientData = new byte[requestHeader.Length + image.Length + formEndString.Length];
             byte[] formEnd = Encoding.ASCII.GetBytes(formEndString);
 
             fileDataByte.CopyTo(clientData, 0);
-            fileData.CopyTo(clientData, requestHeader.Length);
-            formEnd.CopyTo(clientData, requestHeader.Length + fileData.Length);
+            image.CopyTo(clientData, requestHeader.Length);
+            formEnd.CopyTo(clientData, requestHeader.Length + image.Length);
             clientSocket.Connect(ipEnd);
             int res = clientSocket.Send(clientData);
             string a = "";
