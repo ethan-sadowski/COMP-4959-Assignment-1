@@ -27,9 +27,10 @@ namespace Assignment1
                     Thread thread = new Thread(new ThreadStart(serverThread.threadMethod));
                     thread.Start();
                 }
+
                 s.Close();
             }
-            catch (SocketException e)
+            catch (SocketException e) 
             {
                 Console.WriteLine("Socket exception: {0}", e);
             }

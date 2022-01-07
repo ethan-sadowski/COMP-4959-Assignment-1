@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net;
 using System.Net.Sockets;
+using System.Reflection;
 namespace Assignment1
 {
     public class ServerThread
@@ -14,17 +15,25 @@ namespace Assignment1
 
         void httpCall(ServletRequest req, ServletResponse res)
         {
-            Servlet httpServlet = new UploadServlet();
+            // Reflection
+            Servlet myUploadServlet = new UploadServlet();
+            Type myTypeObj = myUploadServlet.GetType();
+            MethodInfo myGetInfo = myTypeObj.GetMethod("doGet");
+            MethodInfo myPostInfo = myTypeObj.GetMethod("doPost");
+            MethodInfo myCustomInfo = myTypeObj.GetMethod("doCustom");
+
+            object[] mParam = new object[] {req, res};
+
             if (req.getHeader("Method") == "GET")
             {
-                httpServlet.doGet(req, res);
+                myGetInfo.Invoke(myUploadServlet, mParam);
             }
             else if (req.getHeader("Method") == "POST")
             {
-                httpServlet.doPost(req, res);
+                myPostInfo.Invoke(myUploadServlet, mParam);
             } else
             {
-                string response = httpServlet.doCustom(req, res);
+                string response = myCustomInfo.Invoke(myUploadServlet, mParam);
                 byte[] msg = System.Text.Encoding.ASCII.GetBytes(response + '\0');
                 cls.Send(msg, msg.Length, 0);
             }
