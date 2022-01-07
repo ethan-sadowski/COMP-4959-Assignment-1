@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Assignment1 {
     class UploadServlet : Servlet {
@@ -86,18 +87,29 @@ namespace Assignment1 {
             string bodyEnd = "</ul></body></html>\r\n";
             res.writeToResponse(bodyStart + files + bodyEnd);
         }
-        public void doCustom(ServletRequest req, ServletResponse res)
+        public string doCustom(ServletRequest req, ServletResponse res)
         {
             List<byte> pictureData = parseCustomPicture(req);
             saveCustomPicture(pictureData);
+            DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "../../../pictures/");
+            // Use NewtonSoft if we really care about serializing/deserializing with a package.
+            // For our purposes had coding it works the same. It just goes to a String anyways.
+            //Newtonsoft.Json json = 
+
+            string bodyStart = "{\n";
+            string files = "";
+            foreach (FileInfo item in dir.GetFiles())
+            {
+                files += "  \"" + item.Name + "\": \"" + item.CreationTime +"\",\n";
+            }
+            string bodyEnd = "}";
+            return bodyStart + files + bodyEnd;
         }
 
         void saveCustomPicture(List<byte> pictureData)
         {
             System.IO.File.WriteAllBytes("../../pictures/picture.jpg", pictureData.ToArray());
-            Console.WriteLine("Saved");
         }
-
 
         //Parses custom requests
         List<byte> parseCustomPicture(ServletRequest req)

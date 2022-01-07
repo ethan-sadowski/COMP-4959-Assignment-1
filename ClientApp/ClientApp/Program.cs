@@ -20,11 +20,21 @@ namespace ClientApp
             DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + "../../../../../../Assignment1/pictures/");
             string fileName = dir.GetFiles()[0].FullName;
             byte[] fileData = File.ReadAllBytes(fileName);
-
-            HttpMethod custom = new HttpMethod("CUSTOM");
+            
             string formEndString = "------WebKitFormBoundary";
             int contentLength = fileData.Length;
-            string requestHeader = "CUSTOM\r\nContent-Length: " + contentLength + "\n\r\n\r\n\r\n";
+
+            string date = "";
+            string caption = "";
+
+            /**
+             * TODO: get date and caption from user input on command line.
+             */
+
+            string requestHeader = "CUSTOM\r\nContent-Length: " + contentLength 
+                //+ "date:" + date
+                //+ "caption" + caption
+                + "\n\r\n\r\n\r\n";
 
 
             byte[] fileDataByte = Encoding.ASCII.GetBytes(requestHeader);
@@ -36,10 +46,24 @@ namespace ClientApp
             formEnd.CopyTo(clientData, requestHeader.Length + fileData.Length);
             Console.WriteLine(fileData.Length);
             Console.WriteLine(clientData.Length - requestHeader.Length);
-            //Console.WriteLine(Encoding.Default.GetString(clientData));
             clientSocket.Connect(ipEnd);
-            clientSocket.Send(clientData);
-            clientSocket.Close();
+            int res = clientSocket.Send(clientData);
+            string a = "";
+            if (clientSocket.Connected)
+            {
+                Byte[] bytesReceived = new Byte[1];
+                while (true)
+                {
+                    if ((clientSocket.Receive(bytesReceived, bytesReceived.Length, 0) == 0) ||
+                              (Encoding.ASCII.GetString(bytesReceived, 0, 1)[0] == '\0'))
+                    {
+                        break;
+                    }
+                    a += Encoding.ASCII.GetString(bytesReceived, 0, 1);
+                }
+            }
+            Console.WriteLine(a);
+            Console.Read();
         }
     }
 }

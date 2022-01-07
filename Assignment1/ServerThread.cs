@@ -24,7 +24,9 @@ namespace Assignment1
                 httpServlet.doPost(req, res);
             } else
             {
-                httpServlet.doCustom(req, res);
+                string response = httpServlet.doCustom(req, res);
+                byte[] msg = System.Text.Encoding.ASCII.GetBytes(response + '\0');
+                cls.Send(msg, msg.Length, 0);
             }
         }
         public void threadMethod()
